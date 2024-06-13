@@ -23,65 +23,88 @@ app.get("/api/:date", function (req, res) {
 
   const url = req.params.date;
 
-  if (isValidUnixTimestamp(url)) {
-    let timestamp = parseInt(url);
-    let date = new Date(timestamp);
-    let utcTime = date.toUTCString();
-    res.json({"unix": timestamp, "utc": utcTime});
+  if (url === "") {
+    // get the current time
+    let currentTimeMillis = Date.now();
+    let unixTimeSeconds = Math.floor(currentTimeMillis / 1000);
 
-  } else if (isValidDateFormat(url)) {
-    const date = new Date(url + "T00:00:00Z");
-    const unix_time = parseInt(date.getTime());
-    const utc_time = date.toUTCString();
-    res.json({"unix": unix_time, "utc": utc_time});
+    // Get current date object
+    let currentDate = new Date();
+    let utcTimeString = currentDate.toUTCString();
+
+    res.json({"unix": unixTimeSeconds, "utc": utcTimeString});
   } else {
-    res.json({"error": "Invalid Date"});
+    const date = new Date(url);
+    if (!isNaN(date.getTime())) {
+      // if date is valid
+      let utcDate = date.toUTCString();
+      let unixTime = date.getTime();
+      res.json({"unix": unixTime, "utc": utcDate});
+    } else {
+      // if date is not valid
+      res.json({"error": "Invalid Date"});
+    }
   }
+
+  // if (isValidUnixTimestamp(url)) {
+  //   let timestamp = parseInt(url);
+  //   let date = new Date(timestamp);
+  //   let utcTime = date.toUTCString();
+  //   res.json({"unix": timestamp, "utc": utcTime});
+
+  // } else if (isValidDateFormat(url)) {
+  //   const date = new Date(url + "T00:00:00Z");
+  //   const unix_time = parseInt(date.getTime());
+  //   const utc_time = date.toUTCString();
+  //   res.json({"unix": unix_time, "utc": utc_time});
+  // } else {
+  //   res.json({"error": "Invalid Date"});
+  // }
 });
 
 
-function isValidUnixTimestamp(url) {
-  const regex = /(\d{13})/;
-  const match = url.match(regex);
+// function isValidUnixTimestamp(url) {
+//   const regex = /(\d{13})/;
+//   const match = url.match(regex);
 
-  if (match) {
-      // Parse the extracted timestamp as an integer
-      const timestamp = parseInt(match[1], 10);
+//   if (match) {
+//       // Parse the extracted timestamp as an integer
+//       const timestamp = parseInt(match[1], 10);
 
-      // Create a Date object using the timestamp
-      const date = new Date(timestamp);
+//       // Create a Date object using the timestamp
+//       const date = new Date(timestamp);
 
-      // Check if the date is valid
-      if (!isNaN(date.getTime())) {
-          return true;
-      }
-  }
-  return false;
-}
+//       // Check if the date is valid
+//       if (!isNaN(date.getTime())) {
+//           return true;
+//       }
+//   }
+//   return false;
+// }
 
-function isValidDateFormat(url) {
-  // Define the regex pattern for "YYYY-MM-DD"
-  const regex = /(\d{4})-(\d{2})-(\d{2})/;
+// function isValidDateFormat(url) {
+//   // Define the regex pattern for "YYYY-MM-DD"
+//   const regex = /(\d{4})-(\d{2})-(\d{2})/;
 
-  // Extract the date part from the URL
-  const match = url.match(regex);
+//   // Extract the date part from the URL
+//   const match = url.match(regex);
 
-  if (match) {
-      // Extract the year, month, and day
-      const year = parseInt(match[1], 10);
-      const month = parseInt(match[2], 10);
-      const day = parseInt(match[3], 10);
+//   if (match) {
+//       // Extract the year, month, and day
+//       const year = parseInt(match[1], 10);
+//       const month = parseInt(match[2], 10);
+//       const day = parseInt(match[3], 10);
 
-      // Create a Date object using the extracted values
-      const date = new Date(year, month - 1, day);
+//       // Create a Date object using the extracted values
+//       const date = new Date(year, month - 1, day);
 
-      // Validate the date components
-      if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
-          return true;
-      }
-  }
-  return false;
-}
+//       // Validate the date components
+//       if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
+//           return true;
+//       }
+//   }
+//   return false;
+// }
 
 
 
