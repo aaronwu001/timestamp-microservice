@@ -22,94 +22,36 @@ app.get("/", function (req, res) {
 app.get("/api/:date", function (req, res) {
 
   const url = req.params.date;
+  const date = new Date(url);
 
-  if (url === "") {
-    // get the current time
-    let currentTimeMillis = Date.now();
-    let unixTimeSeconds = Math.floor(currentTimeMillis / 1000);
-
-    // Get current date object
-    let currentDate = new Date();
-    let utcTimeString = currentDate.toUTCString();
-
-    res.json({"unix": unixTimeSeconds, "utc": utcTimeString});
-  } else {
-    let date = new Date(url);
-    if (isNaN(date.getTime())) {
-      date = new Date(parseInt(url));
-    }
-    if (!isNaN(date.getTime())) {
-      // if date is valid
-      let utcDate = date.toUTCString();
-      let unixTime = date.getTime();
-      res.json({"unix": unixTime, "utc": utcDate});
-    } else {
-      // if date is not valid
-      res.json({"error": "Invalid Date"});
-    }
+  if (isNaN(date.getTime())) {
+    date = new Date(parseInt(url));
   }
-
-  // if (isValidUnixTimestamp(url)) {
-  //   let timestamp = parseInt(url);
-  //   let date = new Date(timestamp);
-  //   let utcTime = date.toUTCString();
-  //   res.json({"unix": timestamp, "utc": utcTime});
-
-  // } else if (isValidDateFormat(url)) {
-  //   const date = new Date(url + "T00:00:00Z");
-  //   const unix_time = parseInt(date.getTime());
-  //   const utc_time = date.toUTCString();
-  //   res.json({"unix": unix_time, "utc": utc_time});
-  // } else {
-  //   res.json({"error": "Invalid Date"});
-  // }
+  
+  if (!isNaN(date.getTime())) {
+    // if date is valid
+    let utcDate = date.toUTCString();
+    let unixTime = date.getTime();
+    res.json({"unix": unixTime, "utc": utcDate});
+  } else {
+    // if date is not valid
+    res.json({"error": "Invalid Date"});
+  }
 });
 
+app.get("/api", function (req, res) {
+  
+  // get the current time
+  let currentTimeMillis = Date.now();
+  let unixTimeSeconds = Math.floor(currentTimeMillis / 1000);
 
-// function isValidUnixTimestamp(url) {
-//   const regex = /(\d{13})/;
-//   const match = url.match(regex);
+  // Get current date object
+  let currentDate = new Date();
+  let utcTimeString = currentDate.toUTCString();
 
-//   if (match) {
-//       // Parse the extracted timestamp as an integer
-//       const timestamp = parseInt(match[1], 10);
-
-//       // Create a Date object using the timestamp
-//       const date = new Date(timestamp);
-
-//       // Check if the date is valid
-//       if (!isNaN(date.getTime())) {
-//           return true;
-//       }
-//   }
-//   return false;
-// }
-
-// function isValidDateFormat(url) {
-//   // Define the regex pattern for "YYYY-MM-DD"
-//   const regex = /(\d{4})-(\d{2})-(\d{2})/;
-
-//   // Extract the date part from the URL
-//   const match = url.match(regex);
-
-//   if (match) {
-//       // Extract the year, month, and day
-//       const year = parseInt(match[1], 10);
-//       const month = parseInt(match[2], 10);
-//       const day = parseInt(match[3], 10);
-
-//       // Create a Date object using the extracted values
-//       const date = new Date(year, month - 1, day);
-
-//       // Validate the date components
-//       if (date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day) {
-//           return true;
-//       }
-//   }
-//   return false;
-// }
-
-
+  res.json({"unix": unixTimeSeconds, "utc": utcTimeString});
+  
+});
 
 // Listen on port set in environment variable or default to 3000
 var listener = app.listen(process.env.PORT || 3000, function () {
