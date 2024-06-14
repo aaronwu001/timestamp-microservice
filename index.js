@@ -43,7 +43,7 @@ app.get("/api", function (req, res) {
   
   // get the current time
   let currentTimeMillis = Date.now();
-  let unixTimeSeconds = Math.floor(currentTimeMillis / 1000);
+  let unixTimeSeconds = Math.floor(currentTimeMillis);
 
   // Get current date object
   let currentDate = new Date();
